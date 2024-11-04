@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -8,8 +8,12 @@ import RegisterPage from './layouts/RegisterPage';
 import NewPostPage from './layouts/NewPostPage';
 import StripePage from './layouts/StripePage';
 
+interface ProtectedRouteProps {
+  children: ReactNode;
+  isAllowed: boolean;
+}
 
-function ProtectedRoute({ children, isAllowed }) {
+function ProtectedRoute({ children, isAllowed }: ProtectedRouteProps) {
   if (!isAllowed) {
     return <Navigate to="/login" replace />;
   }
@@ -17,8 +21,14 @@ function ProtectedRoute({ children, isAllowed }) {
   return children;
 }
 
+interface RootState {
+  user: {
+    isAuthenticated: boolean;
+  };
+}
+
 function App() {
-  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
   return (
     <Routes>
