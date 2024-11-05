@@ -5,7 +5,7 @@ import { useSelector } from 'react-redux';
 import HomePage from './layouts/HomePage';
 import LoginPage from './layouts/LoginPage';
 import RegisterPage from './layouts/RegisterPage';
-import NewPostPage from './layouts/NewPostPage';
+import NewPostPage from './layouts/NewPost';
 import StripePage from './layouts/StripePage';
 
 interface ProtectedRouteProps {
@@ -17,7 +17,6 @@ function ProtectedRoute({ children, isAllowed }: ProtectedRouteProps) {
   if (!isAllowed) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 }
 
