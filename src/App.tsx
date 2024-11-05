@@ -1,23 +1,22 @@
 import React, { ReactNode } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-
 import HomePage from './layouts/HomePage';
 import LoginPage from './layouts/LoginPage';
 import RegisterPage from './layouts/RegisterPage';
-import NewPostPage from './layouts/NewPost';
-import StripePage from './layouts/StripePage';
+import NewPostPage from './layouts/NewPostPage';
+import StipePage from './layouts/StipePage';
 
 interface ProtectedRouteProps {
   children: ReactNode;
   isAllowed: boolean;
 }
 
-function ProtectedRoute({ children, isAllowed }: ProtectedRouteProps) {
+function ProtectedRoute({ children, isAllowed }: ProtectedRouteProps): JSX.Element {
   if (!isAllowed) {
     return <Navigate to="/login" replace />;
   }
-  return children;
+  return <>{children}</>;
 }
 
 interface RootState {
@@ -26,12 +25,12 @@ interface RootState {
   };
 }
 
-function App() {
+const App: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
 
   return (
     <Routes>
-      <Route path="/" element={<StripePage />} />
+      <Route path="/" element={<StipePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route 
@@ -52,6 +51,6 @@ function App() {
       />
     </Routes>
   );
-}
+};
 
 export default App;

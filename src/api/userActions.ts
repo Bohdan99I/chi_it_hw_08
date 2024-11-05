@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 
 interface UserCredentials {
-    email: string;
+    username: string;
     password: string;
 }
 
@@ -10,7 +10,7 @@ export const login = async (credentials: UserCredentials) => {
     if (response.data.token) {
         localStorage.setItem('token', response.data.token);
     }
-    return response.data;
+    return response;
 };
 
 export const register = async (credentials: UserCredentials) => {
@@ -18,5 +18,5 @@ export const register = async (credentials: UserCredentials) => {
     if (response.data.token) {
         localStorage.setItem('token', response.data.token);
     }
-    return response.data;
+    return response;
 };

@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { login, register } from '../../api/userActions';
 
+interface UserCredentials {
+    username: string;
+    password: string;
+}
+
 interface UserState {
     isAuthenticated: boolean;
     user: any;
@@ -15,12 +20,12 @@ const initialState: UserState = {
     error: null,
 };
 
-export const userLogin = createAsyncThunk('user/login', async (credentials) => {
+export const userLogin = createAsyncThunk('user/login', async (credentials: UserCredentials) => {
     const response = await login(credentials);
     return response.data;
 });
 
-export const userRegister = createAsyncThunk('user/register', async (credentials) => {
+export const userRegister = createAsyncThunk('user/register', async (credentials: UserCredentials) => {
     const response = await register(credentials);
     return response.data;
 });
