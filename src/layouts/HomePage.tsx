@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { fetchMyExhibits } from '../api/exhibitActions';
 import Post from '../components/Post';
-import { Box } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 
 const HomePage: React.FC = () => {
   const [posts, setPosts] = useState<any[]>([]);
@@ -12,6 +12,7 @@ const HomePage: React.FC = () => {
 
   return (
     <Box>
+      <Typography variant="h4">Home Page</Typography>
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}

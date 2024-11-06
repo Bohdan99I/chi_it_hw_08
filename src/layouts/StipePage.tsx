@@ -11,17 +11,20 @@ const StipePage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchExhibits().then((data) => {
-      if (data && data.posts) {
-        setPosts(data.posts);
-        setTotalPages(data.totalPages);
-      } else {
-        setError('Error loading posts');
-      }
-    }).catch((err) => {
-      setError('Error loading posts');
-      console.error(err);
-    });
+    fetchExhibits()
+      .then((data) => {
+        console.log("Data fetched from API:", data); 
+        if (data && data.data) {
+          setPosts(data.data);
+          setTotalPages(data.lastPage);
+        } else {
+          setError('Error loading posts: No data available');
+        }
+      })
+      .catch((err) => {
+        setError('Error loading posts: ' + err.message);
+        console.error(err);
+      });
   }, [currentPage]);
 
   if (error) {
@@ -30,6 +33,7 @@ const StipePage: React.FC = () => {
 
   return (
     <Box>
+      <Typography variant="h4" sx={{ marginBottom: 2 }}>All Posts</Typography>
       {posts.length > 0 ? (
         posts.map((post) => (
           <Post key={post.id} post={post} />

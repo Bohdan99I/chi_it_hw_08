@@ -1,8 +1,13 @@
 import axiosInstance from './axiosInstance';
 
 export const fetchExhibits = async () => {
-    const response = await axiosInstance.get('/exhibits');
-    return response.data;
+    try {
+        const response = await axiosInstance.get('/exhibits');
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching exhibits: ", error);
+        throw error;
+    }
 };
 
 export const fetchMyExhibits = async () => {
