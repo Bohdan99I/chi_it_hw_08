@@ -1,32 +1,25 @@
-import React from 'react';
-import { Typography, Card, CardMedia, CardContent } from '@mui/material';
+import React from "react";
+import { Typography, Card, CardMedia, CardContent } from "@mui/material";
 
-interface PostProps {
-  post: {
-    id: string;
-    description: string;
-    imageUrl: string;
-    user: {
-      username: string;
-    };
-    commentCount: number;
-  };
-}
-
-const Post: React.FC<PostProps> = ({ post }) => {
-  console.log('Rendering Post:', post); 
+const Post: React.FC<any> = ({
+  user,
+  description,
+  imageUrl,
+  commentCount,
+  createdAt,
+  id,
+}) => {
   return (
-    <Card sx={{ marginBottom: 2, border: '1px solid black' }}>
+    <Card sx={{ marginBottom: 2, border: "1px solid black" }}>
       <CardMedia
         component="img"
-        height="140"
-        image={post.imageUrl}
-        alt={post.description}
+        image={`http://ec2-13-49-67-34.eu-north-1.compute.amazonaws.com/${imageUrl}`}
+        alt={description}
       />
       <CardContent>
-        <Typography variant="h6">{post.description}</Typography>
-        <Typography variant="subtitle2">Posted by: {post.user.username}</Typography>
-        <Typography variant="subtitle2">Comments: {post.commentCount}</Typography>
+        <Typography variant="h6">{description}</Typography>
+        <Typography variant="subtitle2">Posted by: {user.username}</Typography>
+        <Typography variant="subtitle2">Comments: {commentCount}</Typography>
       </CardContent>
     </Card>
   );

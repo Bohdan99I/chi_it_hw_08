@@ -1,13 +1,23 @@
 import axiosInstance from './axiosInstance';
 
-export const fetchExhibits = async () => {
-    try {
-        const response = await axiosInstance.get('/exhibits');
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching exhibits: ", error);
-        throw error;
-    }
+// import { UserI } from "./UserI";
+
+export interface ExhibitI {
+    id: number;
+    imageUrl: string;
+    description: string;
+    user: any; //UserI;
+    commentCount: number;
+    createdAt: string;
+}
+
+export const fetchExhibits = async (page: number): Promise<ExhibitI[] | any> => {
+    const response = axiosInstance.get<ExhibitI[]>('/api/exhibits', {
+        params: {
+            page: page
+        }
+    });
+    return response;
 };
 
 export const fetchMyExhibits = async () => {
