@@ -6,17 +6,31 @@ interface UserCredentials {
 }
 
 export const login = async (credentials: UserCredentials) => {
-    const response = await axiosInstance.post('/auth/login', credentials);
-    if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+    try {
+        const response = await axiosInstance.post('/auth/login', credentials);
+        const { token } = response.data;
+        if (token) {
+            localStorage.setItem('token', token);
+            axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+        }
+        return response.data;
+    } catch (error) {
+        console.error('Login error:', error);
+        throw error;
     }
-    return response;
 };
 
 export const register = async (credentials: UserCredentials) => {
-    const response = await axiosInstance.post('/auth/register', credentials);
-    if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
+    try {
+        const response = await axiosInstance.post('/auth/register', credentials);
+        return response.data;
+    } catch (error) {
+        console.error('Register error:', error);
+        throw error;
     }
-    return response;
+};
+
+export const logout = () => {
+    localStorage.removeItem('token');
+    delete axiosInstance.defaults.headers.common['Authorization'];
 };

@@ -1,55 +1,64 @@
-import React, { ReactNode } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import HomePage from './layouts/HomePage';
+import React, { useEffect } from 'react';
+import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import StipePage from './layouts/StipePage';
+import NewPostPage from './layouts/NewPostPage';
 import LoginPage from './layouts/LoginPage';
 import RegisterPage from './layouts/RegisterPage';
-import NewPostPage from './layouts/NewPostPage';
-import StipePage from './layouts/StipePage';
+import { validateToken, logout } from './store/slices/userSlice';
+import { RootState, AppDispatch } from './store/store';
+import { tokenStorage } from './utils/tokenStorage';
+import ControlBar from './components/ControlBar';
+import { Box } from '@mui/material';
 
-interface ProtectedRouteProps {
-  children: ReactNode;
-  isAllowed: boolean;
-}
-
-function ProtectedRoute({ children, isAllowed }: ProtectedRouteProps): JSX.Element {
-  if (!isAllowed) {
-    return <Navigate to="/login" replace />;
+// Компонент для захищених маршрутів
+const PrivateRoute: React.FC<{ element: React.ReactElement }> = ({ element }) => {
+  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const location = useLocation();
+  
+  if (!isAuthenticated) {
+    // Зберігаємо поточний URL для перенаправлення після входу
+    return <Navigate to={`/login?redirect=${encodeURIComponent(location.pathname)}`} state={{ from: location }} replace />;
   }
-  return <>{children}</>;
-}
 
-interface RootState {
-  user: {
-    isAuthenticated: boolean;
-  };
-}
+  return element;
+};
+
+// Компонент для виходу
+const LogoutRoute: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(logout());
+    navigate('/login');
+  }, [dispatch, navigate]);
+
+  return null;
+};
 
 const App: React.FC = () => {
-  const isAuthenticated = useSelector((state: RootState) => state.user.isAuthenticated);
+  const dispatch = useDispatch<AppDispatch>();
+
+  useEffect(() => {
+    if (tokenStorage.hasToken()) {
+      dispatch(validateToken());
+    }
+  }, [dispatch]);
 
   return (
-    <Routes>
-      <Route path="/" element={<StipePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route 
-        path="/home"
-        element={
-          <ProtectedRoute isAllowed={isAuthenticated}>
-            <HomePage />
-          </ProtectedRoute>
-        }
-      />
-      <Route 
-        path="/new-post"
-        element={
-          <ProtectedRoute isAllowed={isAuthenticated}>
-            <NewPostPage />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+    <>
+      <ControlBar />
+      <Box sx={{ mt: 8 }}> {/* Додаємо відступ зверху для контенту під ControlBar */}
+        <Routes>
+          <Route path="/" element={<StipePage />} />
+          <Route path="/new-post" element={<PrivateRoute element={<NewPostPage />} />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/logout" element={<LogoutRoute />} />
+        </Routes>
+      </Box>
+    </>
   );
 };
 

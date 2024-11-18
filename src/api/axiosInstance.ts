@@ -1,30 +1,44 @@
 import axios from 'axios';
-import { history } from '../navigate';
+import { tokenStorage } from '../utils/tokenStorage';
+import store from '../store/store';
+import { logout } from '../store/slices/userSlice';
 
 const axiosInstance = axios.create({
-    baseURL: 'http://ec2-13-49-67-34.eu-north-1.compute.amazonaws.com/',
+    baseURL: '',
     timeout: 10000,
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 axiosInstance.interceptors.request.use(
     (config) => {
-        const token = localStorage.getItem('token');
+        const token = tokenStorage.getToken();
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
+        }    
+        if (config.data instanceof FormData) {
+            delete config.headers['Content-Type'];
         }
         return config;
     },
     (error) => {
+        console.error('Request interceptor error:', error);
         return Promise.reject(error);
     }
 );
 
 axiosInstance.interceptors.response.use(
-    (response) => response.data,
+    (response) => response,
     (error) => {
-        if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-            localStorage.removeItem('token');
-            history.push('/login');
+        console.error('Response error:', error.response?.data || error.message);
+        
+        if (error.response?.status === 401) {     
+            store.dispatch(logout());       
+            const currentPath = window.location.pathname;    
+            if (currentPath !== '/login') {
+                window.location.href = `/login?redirect=${encodeURIComponent(currentPath)}`;
+            }
         }
         return Promise.reject(error);
     }
